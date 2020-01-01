@@ -1,0 +1,24 @@
+<%include ../partials/header.ejs%>
+<h1>
+        <%=book.title%>
+        <%=book%>
+</h1>
+<div class="container">
+<a href="/books">To Books</a>
+<a href="/books/<%=book._id%>/edit">EDIT</a>
+<form action="/books/<%=book._id%>?_method=DELETE" method="POST">
+    <input type="submit" value="DELETE">
+</form>
+<br>
+<br>
+<h1>lending</h1>
+<form action="/lending/<%=book._id%>" method="post">
+    <input type="date" name="start" id="" min="<%= moment().format('YYYY-MM-DD'); %>">
+    <input type="date" name="end" id="" min="<%= moment().format('YYYY-MM-DD'); %>">
+    <input type="submit" value="Apply">
+</form>
+
+
+<a href="/lending/<%=book._id%>">Lend</a>
+</div>
+<%include ../partials/footer.ejs%>

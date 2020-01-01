@@ -1,0 +1,12 @@
+<%include ../partials/header%>
+<a href="./books/new">Book NEw</a>
+<p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Maiores dolore nostrum alias voluptatum quo unde fugit perferendis totam quibusdam. Non sed necessitatibus nobis beatae laboriosam nihil facilis incidunt quisquam consequuntur.</p>
+    <%list.forEach((book)=>{%>
+        <a href="books/<%=book._id%>"><h2><%=book.title%></h2></a>
+        <%=book.author%>
+        <%=book.genre%>
+        <br>
+    <%})%>
+    
+    <!-- <button href=""></button> -->
+<%include ../partials/footer%>

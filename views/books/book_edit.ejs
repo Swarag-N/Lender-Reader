@@ -1,0 +1,9 @@
+<% include ../partials/header.ejs%>
+<h1><%=book._id%></h1>
+<form action="/books/<%=book._id%>?_method=PUT" method="POST">
+    <input type="text" name="Book[title]" id="Title" placeholder="<%=book.title%>" value="<%=book.title%>">
+    <input type="text" name="Book[author]" id="Author" placeholder="<%=book.author%>" value="<%=book.author%>">
+    <input type="text" name="Book[genre]" id="Genre" placeholder="<%=book.genre%>" value="<%=book.genre%>" >
+    <input type="submit">
+</form>
+<% include ../partials/footer.ejs%>
