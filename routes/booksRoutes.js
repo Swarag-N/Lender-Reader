@@ -1,5 +1,5 @@
-var express = require('express')
-    Book = require('../models/BookModel')
+const express = require('express');
+Book = require('../models/BookModel')
     Lending=require('../models/LendingModel')
     moment = require('moment')
     route = express.Router();
@@ -14,7 +14,7 @@ route.get('/',(Request,Response)=>{
         }else{
             Response.render('books/book_index',{list:found_books});
         }
-    })}else{
+    }).limit(10)}else{
         Response.redirect('/login')
     }
 
@@ -105,16 +105,35 @@ route.put("/:id",isLoggedinCheck,(Request,Response)=>{
 
 
 route.delete("/:id",isLoggedinCheck,(Request,Response)=>{
-    console.log("in Delete Mode")
+    console.log("in Delete Mode");
     Book.findByIdAndRemove(Request.params.id,(err)=>{
         if(err){
             console.log("Error in deleting a Book");
             console.log(err);
         }else{
-            console.log("Delete Sucessfull")
+            console.log("Delete Sucessfull");
             Response.redirect("/books")
         }
     })
-})
+});
+
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
+//Todo Add a Search query Box and Optimize thw working of it
+
+route.get("/search/:id",isLoggedinCheck,(Request,Response)=>{
+    console.log("Search");
+    const searchParameter = new RegExp(escapeRegex(Request.params.id), 'gi')
+    Book.find({"title":searchParameter },(err, foundBooK)=>{
+        if(err){
+            console.log(err);
+            Response.send(err);
+        }else{
+            Response.send(foundBooK);
+        }
+    })
+
+});
 
 module.exports = route;
