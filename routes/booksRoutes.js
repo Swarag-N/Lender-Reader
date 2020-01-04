@@ -1,35 +1,73 @@
-const express = require('express');
-Book = require('../models/BookModel')
-    Lending=require('../models/LendingModel')
-    moment = require('moment')
-    route = express.Router();
+const express = require('express')
+const Book = require('../models/BookModel');
+const Lending=require('../models/LendingModel');
+const moment = require('moment');
+const route = express.Router();
+
+isLoggedinCheck = function ( request,respond,next){
+    if(request.isAuthenticated()){
+        return next();
+    }
+    console.log("you reched to add Bookss without logginin");
+    // request.flash("error","Login Required");
+
+    respond.redirect("/login");
+};
+
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
+
+route.get("/search/:id",isLoggedinCheck,(Request,Response)=>{
+    console.log("Search");
+    const searchParameter = new RegExp(escapeRegex(Request.params.id), 'gi');
+    Book.find({"title":searchParameter },(err, foundBooK)=>{
+        if(err){
+            console.log(err);
+            Response.send(err);
+        }else{
+            Response.send(foundBooK);
+            // Response.render('books/book_index',{list:foundBooK});
+        }
+    })
+
+});
 
 
 route.get('/',(Request,Response)=>{
-    console.log(Request.user)
+    console.log(Request.user);
     if (Request.user){
-    Book.find((err,found_books)=>{
-        if(err){
-            console.log(err);
-        }else{
-            Response.render('books/book_index',{list:found_books});
-        }
-    }).limit(10)}else{
+        var noMatch = null;
+        if(Request.query.search) {
+            console.log(Request.query.search);
+            const regex = new RegExp(escapeRegex(Request.query.search), 'gi');
+            // Get all campgrounds from DB
+            Book.find({name: regex}, function(err, foundBooK){
+                if(err){
+                    console.log(err);
+                } else {
+                    if(foundBooK.length < 1) {
+                        noMatch = "No campgrounds match that query, please try again.";
+                    }
+                    Response.render("books/book_index",{list:foundBooK, noMatch: noMatch});
+                }
+            });
+        } else {
+            Book.find((err,found_books)=>{
+                if(err){
+                    console.log(err);
+                }else{
+                    Response.render('books/book_index',{list:found_books});
+                }
+            }).limit(10)}
+    } else{
         Response.redirect('/login')
     }
 
     // console.log(a)
     // Response.render('books/book_index',{list:book.find()});
 });
-isLoggedinCheck = function ( request,respond,next){
-	if(request.isAuthenticated()){
-		return next();
-	}
-	console.log("you reched to add Bookss without logginin");
-    // request.flash("error","Login Required");
-    
-	respond.redirect("/login");
-};
+
 //ADDING NEW BOOKS
 route.get("/new",isLoggedinCheck,(Request,Response)=>{
     Response.render("books/book_new")
@@ -117,23 +155,8 @@ route.delete("/:id",isLoggedinCheck,(Request,Response)=>{
     })
 });
 
-function escapeRegex(text) {
-    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-}
+
 //Todo Add a Search query Box and Optimize thw working of it
 
-route.get("/search/:id",isLoggedinCheck,(Request,Response)=>{
-    console.log("Search");
-    const searchParameter = new RegExp(escapeRegex(Request.params.id), 'gi')
-    Book.find({"title":searchParameter },(err, foundBooK)=>{
-        if(err){
-            console.log(err);
-            Response.send(err);
-        }else{
-            Response.send(foundBooK);
-        }
-    })
-
-});
 
 module.exports = route;
