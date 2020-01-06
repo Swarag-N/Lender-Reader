@@ -8,7 +8,7 @@ isLoggedinCheck = function ( request,respond,next){
     if(request.isAuthenticated()){
         return next();
     }
-    console.log("you reched to add Bookss without logginin");
+    console.log("you reached to add Books without logging in");
     // request.flash("error","Login Required");
 
     respond.redirect("/login");
@@ -18,54 +18,32 @@ function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 }
 
-route.get("/search/:id",isLoggedinCheck,(Request,Response)=>{
-    console.log("Search");
-    const searchParameter = new RegExp(escapeRegex(Request.params.id), 'gi');
-    Book.find({"title":searchParameter },(err, foundBooK)=>{
-        if(err){
-            console.log(err);
-            Response.send(err);
-        }else{
-            Response.send(foundBooK);
-            // Response.render('books/book_index',{list:foundBooK});
-        }
-    })
 
-});
-
-
-route.get('/',(Request,Response)=>{
+route.get('/',isLoggedinCheck,(Request,Response)=>{
     console.log(Request.user);
-    if (Request.user){
-        var noMatch = null;
-        if(Request.query.search) {
-            console.log(Request.query.search);
-            const regex = new RegExp(escapeRegex(Request.query.search), 'gi');
-            // Get all campgrounds from DB
-            Book.find({name: regex}, function(err, foundBooK){
-                if(err){
-                    console.log(err);
-                } else {
-                    if(foundBooK.length < 1) {
-                        noMatch = "No campgrounds match that query, please try again.";
-                    }
-                    Response.render("books/book_index",{list:foundBooK, noMatch: noMatch});
+    let noMatch = null;
+    if(Request.query.search) {
+        const regex = new RegExp(escapeRegex(Request.query.search), 'gi');
+        Book.find({"title": regex}, function(err, foundBooK){
+            if(err){
+                console.log(err);
+                Response.send(err)
+            } else {
+                if(foundBooK.length < 1) {
+                    noMatch = "No campgrounds match that query, please try again.";
+                }
+                console.log(foundBooK);
+                Response.render("books/book_index",{list:foundBooK, noMatch: noMatch});
                 }
             });
         } else {
-            Book.find((err,found_books)=>{
-                if(err){
-                    console.log(err);
-                }else{
-                    Response.render('books/book_index',{list:found_books});
-                }
-            }).limit(10)}
-    } else{
-        Response.redirect('/login')
-    }
-
-    // console.log(a)
-    // Response.render('books/book_index',{list:book.find()});
+        Book.find((err,found_books)=>{
+            if(err){
+                console.log(err);
+                Response.send(err);
+            }else{
+                Response.render('books/book_index',{list:found_books});
+            }}).limit(10)}
 });
 
 //ADDING NEW BOOKS
@@ -156,7 +134,23 @@ route.delete("/:id",isLoggedinCheck,(Request,Response)=>{
 });
 
 
-//Todo Add a Search query Box and Optimize thw working of it
+//Todo Add a Search query Box and Optimize thw working of it  Done ;)
+//Todo have page numbers for search
 
+//route.get("/search/:id",isLoggedinCheck,(Request,Response)=>{
+//     const searchParameter = new RegExp(escapeRegex(Request.params.id), 'gi');
+//     console.log("Search",Request.params.id,typeof (Request.params.id),searchParameter);
+//     Book.find({"title":searchParameter },(err, foundBooK)=>{
+//         if(err){
+//             console.log(err);
+//             Response.send(err);
+//         }else{
+//             console.log(foundBooK);
+//             Response.send(foundBooK);
+//             // Response.render('books/book_index',{list:foundBooK});
+//         }
+//     })
+//
+// });
 
 module.exports = route;
