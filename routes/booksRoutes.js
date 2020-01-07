@@ -17,7 +17,7 @@ function isLoggedInCheck( request,respond,next){
 function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 }
-//Todo Page Division and getting the value.
+//Todo Page Division and getting the value
 
 route.get('/',isLoggedInCheck,(Request,Response)=>{
     console.log(Request.user);
