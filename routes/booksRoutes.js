@@ -1,10 +1,10 @@
-const express = require('express')
+const express = require('express');
 const Book = require('../models/BookModel');
-const Lending=require('../models/LendingModel');
+// const Lending=require('../models/LendingModel');
 const moment = require('moment');
 const route = express.Router();
 
-isLoggedinCheck = function ( request,respond,next){
+function isLoggedInCheck( request,respond,next){
     if(request.isAuthenticated()){
         return next();
     }
@@ -12,14 +12,14 @@ isLoggedinCheck = function ( request,respond,next){
     // request.flash("error","Login Required");
 
     respond.redirect("/login");
-};
+}
 
 function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 }
+//Todo Page Division and getting the value.
 
-
-route.get('/',isLoggedinCheck,(Request,Response)=>{
+route.get('/',isLoggedInCheck,(Request,Response)=>{
     console.log(Request.user);
     let noMatch = null;
     if(Request.query.search) {
@@ -33,7 +33,7 @@ route.get('/',isLoggedinCheck,(Request,Response)=>{
                     noMatch = "No campgrounds match that query, please try again.";
                 }
                 console.log(foundBooK);
-                Response.render("books/book_index",{list:foundBooK, noMatch: noMatch});
+                Response.render("books/book_index",{list:foundBooK, noMatch: noMatch,page:Math.floor(foundBooK.length/10)});
                 }
             });
         } else {
@@ -42,18 +42,19 @@ route.get('/',isLoggedinCheck,(Request,Response)=>{
                 console.log(err);
                 Response.send(err);
             }else{
-                Response.render('books/book_index',{list:found_books});
-            }}).limit(10)}
+                Response.render('books/book_index',{list:found_books, page:Math.floor(found_books.length/10)});
+            }})}
+            // .limit(10)}
 });
 
 //ADDING NEW BOOKS
-route.get("/new",isLoggedinCheck,(Request,Response)=>{
+route.get("/new",isLoggedInCheck,(Request,Response)=>{
     Response.render("books/book_new")
 });
 
 
 //POSTING NEW BOOKS
-route.post("/",isLoggedinCheck,(Request,Response)=>{
+route.post("/",isLoggedInCheck,(Request,Response)=>{
     console.log("arrived at post");
     console.log(Request.body.Book)
     console.log(Request.user.id,"****************************")
@@ -64,19 +65,17 @@ route.post("/",isLoggedinCheck,(Request,Response)=>{
         }else{
             console.log(new_book);
         }
-    })
+    });
     Response.redirect("/books");
 });
 
 //SHOW BOOKS
-route.get("/:id",isLoggedinCheck,(Request,Response)=>{
-    console.log("++++++++++++++++++++++++++++++++++++++++++")
+route.get("/:id",isLoggedInCheck,(Request,Response)=>{
     Book.findById(Request.params.id).populate("history").exec(function(err,found_book){
         if(err){
-            console.log("Error at Showing Books Retriveing the Book");
             console.log(err);
         }else{
-            console.log(found_book)
+            console.log(found_book);
             Response.render('books/book_show.ejs',{
                 book:found_book,
                 moment:moment
@@ -87,8 +86,7 @@ route.get("/:id",isLoggedinCheck,(Request,Response)=>{
 
 
 //EDIT BOOKS
-route.get("/:id/edit",isLoggedinCheck,(Request,Response)=>{
-    console.log("In EDIT of a Sepcific BOOK");
+route.get("/:id/edit",isLoggedInCheck,(Request,Response)=>{
     Book.findById(Request.params.id,(err,found_book)=>{
         if(err){
             console.log("Error In Viewing the Book for EDit");
@@ -98,21 +96,14 @@ route.get("/:id/edit",isLoggedinCheck,(Request,Response)=>{
             Response.render("books/book_edit",{book:found_book});
         }
     });
-    // Response.render("books/book_edit",{book:Request.params.id});
 });
 
-// PUT REquest
-route.put("/:id",isLoggedinCheck,(Request,Response)=>{
-    console.log("+++++++++++++++++++++++In put++++++++++++++++++")
-    console.log(Request.body.Book);
-    console.log(Request.params.id)
-    console.log("+++++++++++++++++++++++In put++++++++++++++++++")
-    // Response.redirect('/books');
+// PUT Request
+route.put("/:id",isLoggedInCheck,(Request,Response)=>{
     Book.findByIdAndUpdate(Request.params.id,Request.body.Book,(err,updated_book)=>{
         if(err){
-            console.log("Error In Updating Book");
+            console.log("Error In Updating Book",err);
         }else{
-            console.log("+++++++++++++Updated Book++++++++++++");
             console.log(updated_book);
             Response.redirect("/books/"+Request.params.id);
         }
@@ -120,14 +111,13 @@ route.put("/:id",isLoggedinCheck,(Request,Response)=>{
 });
 
 
-route.delete("/:id",isLoggedinCheck,(Request,Response)=>{
-    console.log("in Delete Mode");
+route.delete("/:id",isLoggedInCheck,(Request,Response)=>{
     Book.findByIdAndRemove(Request.params.id,(err)=>{
         if(err){
             console.log("Error in deleting a Book");
             console.log(err);
         }else{
-            console.log("Delete Sucessfull");
+            console.log("Delete Successful");
             Response.redirect("/books")
         }
     })

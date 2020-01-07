@@ -3,10 +3,19 @@
 
 <form action="/books" method="GET">
     <div class="form-group">
-        <input type="text" name="search" placeholder="Campground search..." class="form-control">
+        <input type="search" name="search" placeholder="Campground search..." class="form-control">
         <input type="submit" value="Search" class="btn btn-default">
     </div>
 </form>
+<form action="/books" method="GET">
+    <div >
+        <%for(let i = 1;i<=page;i++){%>
+        <input type="radio" name="page" placeholder="."  value="<%=i%>" ><%=i%><br>
+        <%}%>
+        <input type="submit" value="page">
+    </div>
+</form>
+
 <!--<p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Maiores dolore nostrum alias voluptatum quo unde fugit perferendis totam quibusdam. Non sed necessitatibus nobis beatae laboriosam nihil facilis incidunt quisquam consequuntur.</p>-->
     <%list.forEach((book)=>{%>
         <a href="books/<%=book._id%>"><h2><%=book.title%></h2></a>
