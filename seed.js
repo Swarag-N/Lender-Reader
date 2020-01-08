@@ -1,6 +1,6 @@
 const faker = require('faker'),
     mongoose = require('mongoose'),
-    book = require('./models/book');
+    book = require('./models/BookModel');
 
 mongoose.connect('mongodb://localhost:27017/learn',{
     useNewUrlParser:true,
@@ -12,7 +12,7 @@ for(i=0;i<10;i++){
         title:faker.random.words(),
         author:faker.name.findName(),
         genre:faker.random.word()
-    }
+    };
 
     book.create(new_book,(err)=>{
         if(err){
@@ -52,7 +52,7 @@ for(i=0;i<10;i++){
 //     if (err){
 //         console.log(err);
 //     }else{
-//         console.log("Sucessfully Book created");
+//         console.log("Successful Book created");
 //     }
 // })
 
@@ -66,7 +66,7 @@ for(i=0;i<10;i++){
 //     if(err){
 //         console.log(err);
 //     }else{
-//         console.log(new_user,"Succesfull");
+//         console.log(new_user,"Successful");
 //     }
 // })
 

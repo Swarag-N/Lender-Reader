@@ -19,7 +19,7 @@ function escapeRegex(text) {
 }
 //Todo Page Division and getting the value
 
-route.get('/',isLoggedInCheck,(Request,Response)=>{
+route.get('/:page',isLoggedInCheck,(Request,Response)=>{
     console.log(Request.user);
     let noMatch = null;
     if(Request.query.search) {
@@ -36,16 +36,34 @@ route.get('/',isLoggedInCheck,(Request,Response)=>{
                 Response.render("books/book_index",{list:foundBooK, noMatch: noMatch,page:Math.floor(foundBooK.length/10)});
                 }
             });
-        } else {
-        Book.find((err,found_books)=>{
-            if(err){
-                console.log(err);
-                Response.send(err);
-            }else{
-                Response.render('books/book_index',{list:found_books, page:Math.floor(found_books.length/10)});
-            }})}
-            // .limit(10)}
-});
+    }else{
+        let perPage = 5;
+        let page = Request.params.page || 1;
+
+        Book.find({})
+            .skip((perPage * page) - perPage)
+            .limit(perPage)
+            .exec(function(err, products) {
+                    Book.count().exec(function(err, count) {
+                        if (err)
+                            return next(err);
+                        Response.render('books/book_index', {
+                            list: products,
+                            current: page,
+                            pages: Math.ceil(count / perPage)
+                        })
+                    })
+                })
+        }});
+//         Book.find((err,found_books)=>{
+//             if(err){
+//                 console.log(err);
+//                 Response.send(err);
+//             }else{
+//                 Response.render('books/book_index',{list:found_books, page:Math.floor(found_books.length/10)});
+//             }})}
+//             // .limit(10)}
+// });
 
 //ADDING NEW BOOKS
 route.get("/new",isLoggedInCheck,(Request,Response)=>{

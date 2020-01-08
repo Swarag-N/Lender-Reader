@@ -7,22 +7,47 @@
         <input type="submit" value="Search" class="btn btn-default">
     </div>
 </form>
-<form action="/books" method="GET">
-    <div >
-        <%for(let i = 1;i<=page;i++){%>
-        <input type="radio" name="page" placeholder="."  value="<%=i%>" ><%=i%><br>
-        <%}%>
-        <input type="submit" value="page">
-    </div>
-</form>
 
-<!--<p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Maiores dolore nostrum alias voluptatum quo unde fugit perferendis totam quibusdam. Non sed necessitatibus nobis beatae laboriosam nihil facilis incidunt quisquam consequuntur.</p>-->
-    <%list.forEach((book)=>{%>
-        <a href="books/<%=book._id%>"><h2><%=book.title%></h2></a>
-        <%=book.author%>
-        <%=book.genre%>
-        <br>
-    <%})%>
-    
-    <!-- <button href=""></button> -->
+<div class="container">
+    <div class="row">
+        <% list.forEach((book)=>{ %>
+            <div class="col-md-4">
+                <a href="books/<%=book._id%>"><h2><%=book.title%></h2></a>
+                    <div class="caption">
+                        <h3><%=book.author%></h3>
+                        <p><%=book.genre%></p>
+                    </div>
+            </div>
+        <% }) %>
+    </div>
+    <% if (pages > 0) { %>
+        <ul class="pagination text-center">
+            <% if (current == 1) { %>
+                <li class="disabled"><a>First</a></li>
+            <% } else { %>
+                <li><a href="/books/1">First</a></li>
+            <% } %>
+            <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
+            <% if (i !== 1) { %>
+                <li class="disabled"><a>...</a></li>
+            <% } %>
+            <% for (; i <= (Number(current) + 4) && i <= pages; i++) { %>
+                <% if (i == current) { %>
+                    <li class="active"><a><%= i %></a></li>
+                <% } else { %>
+                    <li><a href="/books/<%= i %>"><%= i %></a></li>
+                <% } %>
+                <% if (i == Number(current) + 4 && i < pages) { %>
+                    <li class="disabled"><a>...</a></li>
+                <% } %>
+            <% } %>
+            <% if (current == pages) { %>
+                <li class="disabled"><a>Last</a></li>
+            <% } else { %>
+                <li><a href="/books/<%= pages %>">Last</a></li>
+            <% } %>
+        </ul>
+    <% } %>
+</div>
+
 <%include ../partials/footer%>
