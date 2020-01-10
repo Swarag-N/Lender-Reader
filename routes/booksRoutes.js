@@ -21,31 +21,62 @@ function escapeRegex(text) {
 
 route.get('/',isLoggedInCheck,(Request,Response)=>{
     console.log(Request.user);
+    console.log(Request.query);
     let noMatch = null;
+    let page = Request.query.page || 1;
+    let perPage = Request.query.results || 6;
     if(Request.query.search) {
         const regex = new RegExp(escapeRegex(Request.query.search), 'gi');
-        Book.find({"title": regex}, function(err, foundBooK){
-            if(err){
-                console.log(err);
-                Response.send(err)
-            } else {
-                if(foundBooK.length < 1) {
-                    noMatch = "No campgrounds match that query, please try again.";
-                }
-                console.log(foundBooK);
-                Response.render("books/book_index",{list:foundBooK, noMatch: noMatch,page:Math.floor(foundBooK.length/10)});
-                }
+        Book.find({"title": regex}, (err, foundBooK)=>{
+            // if(err){
+            //     console.log(err);
+            //     Response.send(err)
+            // } else {
+            //     if(foundBooK.length < 1) {
+            //         noMatch = "No campgrounds match that query, please try again.";
+            //     }
+            //     // console.log(foundBooK);
+            //     Response.render("books/book_index",{list:foundBooK, noMatch: noMatch,pages:Math.floor(foundBooK.length/10),current: 1,});
+            //     }
+            })
+            .skip((perPage * page) - perPage)
+            .limit(perPage)
+            .exec(function(err, foundBooK) {
+                Book.countDocuments().exec(function(err, count) {
+                    if (err)
+                        return next(err);
+                    Response.render('books/book_index', {
+                        list: foundBooK,
+                        current: page,
+                        pages: Math.ceil(count / perPage)
+                    })
+                })
             });
-        } else {
-        Book.find((err,found_books)=>{
-            if(err){
-                console.log(err);
-                Response.send(err);
-            }else{
-                Response.render('books/book_index',{list:found_books, page:Math.floor(found_books.length/10)});
-            }})}
-            // .limit(10)}
-});
+    }else{
+        Book.find({})
+            .skip((perPage * page) - perPage)
+            .limit(perPage)
+            .exec(function(err, products) {
+                    Book.countDocuments().exec(function(err, count) {
+                        if (err)
+                            return next(err);
+                        Response.render('books/book_index', {
+                            list: products,
+                            current: page,
+                            pages: Math.ceil(count / perPage)
+                        })
+                    })
+                })
+        }});
+//         Book.find((err,found_books)=>{
+//             if(err){
+//                 console.log(err);
+//                 Response.send(err);
+//             }else{
+//                 Response.render('books/book_index',{list:found_books, page:Math.floor(found_books.length/10)});
+//             }})}
+//             // .limit(10)}
+// });
 
 //ADDING NEW BOOKS
 route.get("/new",isLoggedInCheck,(Request,Response)=>{
@@ -56,8 +87,8 @@ route.get("/new",isLoggedInCheck,(Request,Response)=>{
 //POSTING NEW BOOKS
 route.post("/",isLoggedInCheck,(Request,Response)=>{
     console.log("arrived at post");
-    console.log(Request.body.Book)
-    console.log(Request.user.id,"****************************")
+    console.log(Request.body.Book);
+    console.log(Request.user.id,"****************************");
     Book.create(Request.body.Book,(err,new_book)=>{
         if(err){
             console.log("There is a error in posting");
