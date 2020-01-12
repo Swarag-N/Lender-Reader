@@ -1,11 +1,11 @@
-var express = require('express')
-    mongoose = require('mongoose')
-    bodyParser = require("body-parser")
-    methodOveride =require("method-override")
-    passport = require('passport')
-    momnet = require('moment')
-    LocalStrategy = require('passport-local')
-    apk = express();
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require("body-parser");
+const methodOveride =require("method-override");
+const passport = require('passport');
+const momnet = require('moment');
+const LocalStrategy = require('passport-local');
+const apk = express();
 
 //models
 const Book = require("./models/BookModel")
@@ -109,7 +109,7 @@ apk.use("/lending",lendingRoutes);
 
 apk.get("*",(Request,Response)=>{
     Response.send("Not Avaliable in Your Country");
-})
+});
 
 
 apk.listen(1234,()=>console.log("My new App started"));

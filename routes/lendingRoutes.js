@@ -1,22 +1,22 @@
-var mongoose = require('mongoose')
-    express = require('express')
-    route = express.Router()
-    Lending = require("../models/LendingModel")
-    Book = require("../models/BookModel")
-    User = require("../models/UserModel");
+const mongoose = require('mongoose');
+const express = require('express');
+const route = express.Router();
+const Lending = require("../models/LendingModel");
+const Book = require("../models/BookModel");
+const User = require("../models/UserModel");
+
+const isLoggedinCheck = function (request, respond, next) {
+    if (request.isAuthenticated()) {
+        return next();
+    }
+    console.log("you reached to add Books without logging");
+    respond.redirect("/login");
+};
 
 route.get("/",(request,response)=>{
     response.send("Hello User");
 });
-isLoggedinCheck = function ( request,respond,next){
-	if(request.isAuthenticated()){
-		return next();
-	}
-	console.log("you reched to add Bookss without logginin");
-    // request.flash("error","Login Required");
-    
-	respond.redirect("/login");
-};
+
 route.get('/:bookID',(Request,Response)=>{
     Book.findById(Request.params.bookID,(err,foundBook)=>{
         if (err){
@@ -52,4 +52,4 @@ route.post('/:bookID',isLoggedinCheck,(Request,Response)=>{
         }
     })
 });
-module.exports = route
+module.exports = route;

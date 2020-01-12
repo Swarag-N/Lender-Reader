@@ -4,12 +4,13 @@ const Book = require('../models/BookModel');
 const moment = require('moment');
 const route = express.Router();
 
+// Todo Getting Pagination in Category and Start Lending Backend
+
 function isLoggedInCheck( request,respond,next){
     if(request.isAuthenticated()){
         return next();
     }
     console.log("you reached to add Books without logging in");
-    // request.flash("error","Login Required");
 
     respond.redirect("/login");
 }
@@ -17,7 +18,7 @@ function isLoggedInCheck( request,respond,next){
 function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 }
-//Todo Page Division and getting the value
+
 
 route.get('/',isLoggedInCheck,(Request,Response)=>{
     console.log(Request.user);
@@ -28,16 +29,6 @@ route.get('/',isLoggedInCheck,(Request,Response)=>{
     if(Request.query.search) {
         const regex = new RegExp(escapeRegex(Request.query.search), 'gi');
         Book.find({"title": regex}, (err, foundBooK)=>{
-            // if(err){
-            //     console.log(err);
-            //     Response.send(err)
-            // } else {
-            //     if(foundBooK.length < 1) {
-            //         noMatch = "No campgrounds match that query, please try again.";
-            //     }
-            //     // console.log(foundBooK);
-            //     Response.render("books/book_index",{list:foundBooK, noMatch: noMatch,pages:Math.floor(foundBooK.length/10),current: 1,});
-            //     }
             })
             .skip((perPage * page) - perPage)
             .limit(perPage)
@@ -68,15 +59,7 @@ route.get('/',isLoggedInCheck,(Request,Response)=>{
                     })
                 })
         }});
-//         Book.find((err,found_books)=>{
-//             if(err){
-//                 console.log(err);
-//                 Response.send(err);
-//             }else{
-//                 Response.render('books/book_index',{list:found_books, page:Math.floor(found_books.length/10)});
-//             }})}
-//             // .limit(10)}
-// });
+
 
 //ADDING NEW BOOKS
 route.get("/new",isLoggedInCheck,(Request,Response)=>{
@@ -153,25 +136,5 @@ route.delete("/:id",isLoggedInCheck,(Request,Response)=>{
         }
     })
 });
-
-
-//Todo Add a Search query Box and Optimize thw working of it  Done ;)
-//Todo have page numbers for search
-
-//route.get("/search/:id",isLoggedinCheck,(Request,Response)=>{
-//     const searchParameter = new RegExp(escapeRegex(Request.params.id), 'gi');
-//     console.log("Search",Request.params.id,typeof (Request.params.id),searchParameter);
-//     Book.find({"title":searchParameter },(err, foundBooK)=>{
-//         if(err){
-//             console.log(err);
-//             Response.send(err);
-//         }else{
-//             console.log(foundBooK);
-//             Response.send(foundBooK);
-//             // Response.render('books/book_index',{list:foundBooK});
-//         }
-//     })
-//
-// });
 
 module.exports = route;
