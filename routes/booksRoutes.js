@@ -38,6 +38,7 @@ route.get('/',isLoggedInCheck,(Request,Response)=>{
                         return next(err);
                     Response.render('books/book_index', {
                         list: foundBooK,
+                        inquiry:Request.query.search,
                         current: page,
                         pages: Math.ceil(count / perPage)
                     })
@@ -53,6 +54,7 @@ route.get('/',isLoggedInCheck,(Request,Response)=>{
                             return next(err);
                         Response.render('books/book_index', {
                             list: products,
+                            inquiry:"",
                             current: page,
                             pages: Math.ceil(count / perPage)
                         })

@@ -8,13 +8,13 @@ const LocalStrategy = require('passport-local');
 const apk = express();
 
 //models
-const Book = require("./models/BookModel")
-const User = require("./models/UserModel")
-const Lending = require('./models/LendingModel')
+const Book = require("./models/BookModel");
+const User = require("./models/UserModel");
+const Lending = require('./models/LendingModel');
 
 //importing Routes
-const bookRoutes = require('./routes/booksRoutes')
-const lendingRoutes = require('./routes/lendingRoutes')
+const bookRoutes = require('./routes/booksRoutes');
+const lendingRoutes = require('./routes/lendingRoutes');
 
 //Using EJS
 apk.set("view engine","ejs");
@@ -22,7 +22,7 @@ apk.set("view engine","ejs");
 
 //For POST 
 apk.use(bodyParser.urlencoded({ extended: true }));
-apk.use(bodyParser.json())
+apk.use(bodyParser.json());
 
 // For PUT and Delete
 apk.use(methodOveride('_method'));

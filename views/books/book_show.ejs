@@ -1,8 +1,5 @@
 :<%include ../partials/header.ejs%>
-<h1>
-        <%=book.title%>
-        <%=book%>
-</h1>
+
 <div class="container">
 <a href="/books">To Books</a>
 <a href="/books/<%=book._id%>/edit">EDIT</a>
@@ -10,6 +7,11 @@
     <input type="submit" value="DELETE">
 </form>
 <br>
+    <% for(let i=0;i<book.history.length;i++){%>
+    <h5><%=book.history[i].start%> <b>to</b> <%=book.history[i].end%></h5>
+    <%}%>
+    <!--  Todo Do Proper Lending-->
+    <!--  Todo Make note possible to lend if Dates Coincide-->
 <br>
 <h1>lending</h1>
 <form action="/lending/<%=book._id%>" method="post">

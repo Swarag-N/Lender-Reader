@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-    Lending=require('./LendingModel')
+const mongoose = require('mongoose'),
+    Lending=require('./LendingModel');
 
 const book_Schema = new mongoose.Schema(
     {

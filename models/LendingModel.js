@@ -1,6 +1,6 @@
-var mongoose = require('mongoose')
-    Book = require('./BookModel')
-    User =require('./UserModel')
+var mongoose = require('mongoose'),
+    Book = require('./BookModel'),
+    User =require('./UserModel');
 
 var lending_Schema = new mongoose.Schema({
     reader:{
