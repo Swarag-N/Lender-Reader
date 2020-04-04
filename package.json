@@ -5,22 +5,36 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db": "c: mongod",
     "start": "node index.js"
   },
   "author": "Swarag",
   "license": "GPL-3.0",
   "dependencies": {
+    "admin-bro": "^2.2.3",
+    "admin-bro-expressjs": "^2.0.1",
+    "admin-bro-mongoose": "^0.5.0",
     "body-parser": "^1.19.0",
     "ejs": "^2.7.4",
     "express": "^4.17.1",
+    "express-formidable": "^1.2.0",
     "express-session": "^1.17.0",
     "faker": "^4.1.0",
     "method-override": "^3.0.0",
     "moment": "^2.24.0",
-    "mongoose": "^5.8.3",
+    "mongoose": "^5.9.7",
+    "morgan": "^1.10.0",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^5.0.1"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Swarag-N/Lender-Reader.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/Swarag-N/Lender-Reader/issues"
+  },
+  "homepage": "https://github.com/Swarag-N/Lender-Reader#readme"
 }

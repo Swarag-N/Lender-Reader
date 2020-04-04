@@ -1,5 +1,7 @@
 :<%include ../partials/header.ejs%>
 
+<%=book%>
+
 <div class="container">
 <a href="/books">To Books</a>
 <a href="/books/<%=book._id%>/edit">EDIT</a>
@@ -8,7 +10,7 @@
 </form>
 <br>
     <% for(let i=0;i<book.history.length;i++){%>
-    <h5><%=book.history[i].start%> <b>to</b> <%=book.history[i].end%></h5>
+    <h5><%=book.history[i].startString%> <b>to</b> <%=book.history[i].endString%></h5>
     <%}%>
     <!--  Todo Do Proper Lending-->
     <!--  Todo Make note possible to lend if Dates Coincide-->

@@ -22,8 +22,8 @@ route.get('/:bookID',(Request,Response)=>{
         if (err){
             console.log(err)
         }else{
-            console.log(foundBook,Request.User)
-            Response.send(foundBook)
+            console.log(foundBook,Request.User);
+            Response.send(foundBook);
         }
     })
 });
@@ -33,10 +33,10 @@ route.post('/:bookID',isLoggedinCheck,(Request,Response)=>{
         if(err){
             console.log(err);
         }else{
-            var lender = {
+            let lender = {
                 reader : Request.user._id,
-                start : Request.body.start,
-                end : Request.body.end
+                start : Date.parse(Request.body.start),
+                end : Date.parse(Request.body.end)
             };
             Lending.create(lender,(err,createdLending)=>{
                 if(err){
@@ -45,9 +45,9 @@ route.post('/:bookID',isLoggedinCheck,(Request,Response)=>{
                 }else{
                     foundBook.history.push(createdLending);
                     foundBook.save();
-                    console.log(createdLending)
+                    console.log("New Lending Done",createdLending)
                 }
-            })
+            });
             Response.redirect("/books/"+Request.params.bookID)
         }
     })

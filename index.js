@@ -5,6 +5,7 @@ const methodOveride =require("method-override");
 const passport = require('passport');
 const momnet = require('moment');
 const LocalStrategy = require('passport-local');
+const logger = require('morgan');
 const apk = express();
 
 //models
@@ -13,12 +14,15 @@ const User = require("./models/UserModel");
 const Lending = require('./models/LendingModel');
 
 //importing Routes
+const adminRoutes = require('./routes/adminRoute');
 const bookRoutes = require('./routes/booksRoutes');
 const lendingRoutes = require('./routes/lendingRoutes');
 
 //Using EJS
 apk.set("view engine","ejs");
 
+//admin-bro dependency
+apk.use('/admin',adminRoutes);
 
 //For POST 
 apk.use(bodyParser.urlencoded({ extended: true }));
@@ -34,7 +38,7 @@ mongoose.connect('mongodb://localhost:27017/learn',{
     useUnifiedTopology: true
 },()=>{console.log("Databse Connected")});
 
-//for  eprecationWarning: Mongoose: `findOneAndUpdate()` and `findOneAndDelete()` without the `useFindAndModify`
+//for  deprecationWarning: Mongoose: `findOneAndUpdate()` and `findOneAndDelete()` without the `useFindAndModify`
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
@@ -47,7 +51,7 @@ apk.use(require("express-session")({
     saveUninitialized:false,
     resave:false,
 }));
-
+apk.use(logger('dev'));
 // Passport Config
 apk.use(passport.initialize());
 apk.use(passport.session());
@@ -58,17 +62,12 @@ passport.deserializeUser(User.deserializeUser());
 
 
 apk.get("/",(Request,Response)=>{
-    console.log("+++++++++++++++++++");
     console.log("home route")
     Response.send("HomePage");
-    console.log("+++++++++++++++++++");
 });
 
 apk.get("/users",(Request,Response)=>{
-    console.log("+++++++++++++++++++");
-    console.log(" User")
     Response.render("user");
-    console.log("+++++++++++++++++++");
 });
 
 apk.get('/register',(request,Response)=>{
@@ -76,7 +75,6 @@ apk.get('/register',(request,Response)=>{
 });
 
 apk.post("/register",(request,respond)=> {
-    console.log(request.body);
     const newUser1 = new User({username: request.body.username, pinCode: request.body.pincode});
     User.register(newUser1, request.body.password, (err, createdUser) => {
         if (err) {
@@ -84,7 +82,6 @@ apk.post("/register",(request,respond)=> {
             return respond.send(err.message)
         }
         passport.authenticate(`local`)(request, respond, () => {
-            console.log(createdUser);
             respond.render("login")
         });
     });
@@ -108,7 +105,7 @@ apk.use("/lending",lendingRoutes);
 
 
 apk.get("*",(Request,Response)=>{
-    Response.send("Not Avaliable in Your Country");
+    Response.send("Not Available in Your Country");
 });
 
 

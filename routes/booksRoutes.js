@@ -15,6 +15,14 @@ function isLoggedInCheck( request,respond,next){
     respond.redirect("/login");
 }
 
+function isEmpty(obj) {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
+}
+
 function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 }
@@ -71,44 +79,60 @@ route.get("/new",isLoggedInCheck,(Request,Response)=>{
 
 //POSTING NEW BOOKS
 route.post("/",isLoggedInCheck,(Request,Response)=>{
-    console.log("arrived at post");
-    console.log(Request.body.Book);
-    console.log(Request.user.id,"****************************");
     Book.create(Request.body.Book,(err,new_book)=>{
         if(err){
             console.log("There is a error in posting");
             console.log(err);
         }else{
-            console.log(new_book);
+            // console.log(new_book);
         }
     });
     Response.redirect("/books");
 });
+
+function dateParse(date /*Date */){
+    let s='';
+    s= padDate(date.getDay(),)+'-'+padDate(date.getMonth()+1)+'-'+date.getFullYear();
+    return s
+}
+function padDate(a){
+    let s;
+    if (a<10){
+        s='0'+a;
+        return s;
+    }
+    return a.toString();
+}
 
 //SHOW BOOKS
 route.get("/:id",isLoggedInCheck,(Request,Response)=>{
     Book.findById(Request.params.id).populate("history").exec(function(err,found_book){
         if(err){
             console.log(err);
-        }else{
-            console.log(found_book);
-            Response.render('books/book_show.ejs',{
-                book:found_book,
-                moment:moment
-            })
+        }else {
+            if (isEmpty(found_book.history)) {
+                //console.log("no history");
+            } else {
+                found_book.history[0].startString = dateParse(new Date(found_book.history[0].start));
+                found_book.history[0].endString = dateParse(new Date(found_book.history[0].end));
+                console.log(found_book.history[0].startString);
+            }
+            Response.render('books/book_show.ejs', {
+                book: found_book,
+                moment: moment
+            });
         }
     })
 });
+
 
 
 //EDIT BOOKS
 route.get("/:id/edit",isLoggedInCheck,(Request,Response)=>{
     Book.findById(Request.params.id,(err,found_book)=>{
         if(err){
-            console.log("Error In Viewing the Book for EDit");
             console.log(err);
         }else{
-            console.log(found_book,"Currently In Edit")
             Response.render("books/book_edit",{book:found_book});
         }
     });
@@ -120,7 +144,6 @@ route.put("/:id",isLoggedInCheck,(Request,Response)=>{
         if(err){
             console.log("Error In Updating Book",err);
         }else{
-            console.log(updated_book);
             Response.redirect("/books/"+Request.params.id);
         }
     });

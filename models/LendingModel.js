@@ -11,11 +11,11 @@ var lending_Schema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"Book"
     },
-    start:Date,
-    end:Date
+    start:Number,
+    end:Number
 });
 
-module.exports = mongoose.model("Lending",lending_Schema)
+module.exports = mongoose.model("Lending",lending_Schema);
 
 // lender:{
 //     type: mongoose.Schema.Types.ObjectId,
